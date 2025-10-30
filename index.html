@@ -257,6 +257,17 @@
                 <span class="step-number">1</span>
                 キントーンCSVデータはこちら
             </div>
+            <div class="input-group">
+                <label for="encoding">文字エンコーディング</label>
+                <select id="encoding">
+                    <option value="Shift_JIS">Shift_JIS（Windowsの場合）</option>
+                    <option value="UTF-8">UTF-8（Macの場合）</option>
+                </select>
+                <div class="info" style="margin-top: 10px;">
+                    💡 Windows環境でエクスポートしたCSVは「Shift_JIS」を選択してください。<br>
+                    Mac環境やUTF-8でエクスポートした場合は「UTF-8」を選択してください。
+                </div>
+            </div>
             <input type="file" id="csvFile" accept=".csv" />
             <div id="fileInfo" class="file-info" style="display: none;"></div>
         </div>
@@ -425,6 +436,9 @@
             const file = e.target.files[0];
             if (!file) return;
 
+            // 選択されたエンコーディングを取得
+            const encoding = document.getElementById('encoding').value;
+
             const reader = new FileReader();
             reader.onload = function(event) {
                 const text = event.target.result;
@@ -432,12 +446,12 @@
 
                 const fileInfo = document.getElementById('fileInfo');
                 fileInfo.style.display = 'block';
-                fileInfo.innerHTML = `📄 <strong>${file.name}</strong> を読み込みました<br>データ件数: ${csvData.length}件 / 列数: ${headers.length}`;
+                fileInfo.innerHTML = `📄 <strong>${file.name}</strong> を読み込みました（${encoding}）<br>データ件数: ${csvData.length}件 / 列数: ${headers.length}`;
 
                 // 列名の選択肢を生成
                 populateColumnSelects();
             };
-            reader.readAsText(file, 'UTF-8');
+            reader.readAsText(file, encoding);
         });
 
         // ID列が変更されたときに更新項目の選択肢を更新
